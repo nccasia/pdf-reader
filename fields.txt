@@ -1,0 +1,7 @@
+Fullname
+Email
+Phone Number
+Date of birth
+Address
+Gender
+Position
