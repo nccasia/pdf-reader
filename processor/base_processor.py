@@ -1,17 +1,12 @@
 from typing import BinaryIO
-import fitz
+from pypdf import PdfReader
 
 
 def convert_pdf_to_text(file_contents):
+    reader = PdfReader(file_contents)
     text = ""
-    pdf_document = fitz.open(stream=file_contents, filetype="pdf")
-    if pdf_document:
-        for page_number in range(len(pdf_document)):
-            page = pdf_document.load_page(page_number)
-            text += page.get_text()
-        pdf_document.close()
-    else:
-        print("Error: Cannot open or process the PDF document.")
+    for page in reader.pages:
+        text += page.extract_text()
     return text
 
 

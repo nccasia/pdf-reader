@@ -5,6 +5,7 @@ __pycache__/
 *.txt
 !requirements.txt
 !fields.txt
+.env
 .env.local
 saudi/
 venv/
