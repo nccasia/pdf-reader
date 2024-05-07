@@ -9,6 +9,8 @@ After the CV file is uploaded, the API uses a processor to process the content o
 
 ## Usage (Installing and running on Ubuntu Server)
 
+This Flask API application processes CV files, extracting important information and returning it in JSON format. It's powered by Gunicorn, a Python WSGI HTTP server.
+
 1. Open a terminal.
 2. Navigate to the directory containing cv_extraction_service.sh.
 3. Run the following command to execute cv_extraction_service.sh:
@@ -21,9 +23,16 @@ Note:
 Before running the above command, you may need to grant execute permission to cv_extraction_service.sh using the `chmod +x cv_extraction_service.sh` command.
 
 4. After running cv_extraction_service.sh, the server will be started on port 1300 with the endpoint http://localhost:1300/extract-cv.
-   If you wish to change the port used by the server, you can do so by modifying the port parameter in the `app.run()` function within the `main.py` file.
 
-5. To stop the service, you can use the `sudo systemctl stop` command:
+5. To check status or stop the service, you can use the `sudo systemctl stop` command:
+
+Check status the service
+
+```bash
+sudo systemctl status your_service.service
+```
+
+Stop the service
 
 ```bash
 sudo systemctl stop your_service.service

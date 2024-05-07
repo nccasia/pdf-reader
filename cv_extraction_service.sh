@@ -1,5 +1,4 @@
 #!/bin/bash
-
 python3 -m venv venv
 
 source venv/bin/activate
@@ -7,13 +6,13 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 
 current_directory=$(pwd)
-
 echo "[Unit]" > extract_cv.service
 echo "Description= CV information extraction Service" >> extract_cv.service
 echo "[Service]" >> extract_cv.service
 echo "User=root" >> extract_cv.service
+echo "EnvironmentFile=$current_directory/.env" >> extract_cv.service
 echo "WorkingDirectory=$current_directory" >> extract_cv.service
-echo "ExecStart=$current_directory/venv/bin/python3 main.py" >> extract_cv.service
+echo "ExecStart=$current_directory/venv/bin/gunicorn -w 2 main:app" >> extract_cv.service
 echo "Restart=always" >> extract_cv.service
 echo "RestartSec=3" >> extract_cv.service
 echo "[Install]" >> extract_cv.service
