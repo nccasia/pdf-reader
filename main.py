@@ -7,8 +7,7 @@ from flask_cors import CORS
 ALLOWED_EXTENSIONS = {"txt", "doc", "docx", "pdf"}
 
 app = Flask(__name__)
-CORS(app, origins=os.getenv("CORS_ORIGIN"))
-
+CORS(app, resources={r"/*": {"origins": os.getenv("CORS_ORIGIN")}})
 processor = GeminiProcessor()
 
 
