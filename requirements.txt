@@ -8,3 +8,4 @@ PyMuPDF==1.24.0
 flask
 gunicorn
 flask_cors
+pyopenssl
