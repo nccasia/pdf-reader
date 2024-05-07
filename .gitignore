@@ -4,6 +4,7 @@ __pycache__/
 *.json
 *.txt
 *.service
+*.pem
 !requirements.txt
 !fields.txt
 .env
