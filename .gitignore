@@ -3,6 +3,7 @@ __pycache__/
 *.zip
 *.json
 *.txt
+*.service
 !requirements.txt
 !fields.txt
 .env
