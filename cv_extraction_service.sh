@@ -12,7 +12,7 @@ echo "[Service]" >> extract_cv.service
 echo "User=root" >> extract_cv.service
 echo "EnvironmentFile=$current_directory/.env" >> extract_cv.service
 echo "WorkingDirectory=$current_directory" >> extract_cv.service
-echo "ExecStart=$current_directory/venv/bin/gunicorn -w 2 main:app" >> extract_cv.service
+echo "ExecStart=$current_directory/venv/bin/gunicorn -w 4 main:app" >> extract_cv.service
 echo "Restart=always" >> extract_cv.service
 echo "RestartSec=3" >> extract_cv.service
 echo "[Install]" >> extract_cv.service
