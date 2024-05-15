@@ -1,5 +1,6 @@
 from typing import BinaryIO
 from pypdf import PdfReader
+import docx2txt
 
 
 def convert_pdf_to_text(file_contents):
@@ -22,8 +23,8 @@ class BaseProcessor:
 
         if file_extensiion == ".pdf":
             attachment_data = convert_pdf_to_text(file)
-        elif file_extensiion in [".txt", ".doc", ".docx"]:
-            attachment_data = file.read()
+        elif file_extensiion in [".doc", ".docx"]:
+            attachment_data = docx2txt.process(file)
         else:
             raise ValueError(
                 "Invalid file extension. Supported file extensions are .txt, .doc, .docx, .pdf."

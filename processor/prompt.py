@@ -30,7 +30,7 @@ The returned result must only contain the fields in the json as above, detailed 
     "position" is the position the candidate wants to apply for 
     "note" take note if CV have a high English certificate (TOEIC >= 800 or IELTS >= 6.0), or good GPA (>= 3.2 with a 4-point scale or >= 8.0 with a 10-point scale), or some good certificates.
 Note: If the information has extra spaces (" "), or "/n" "/t"  ... you can reformat it to look better without changing the information. Example: "address": "H a N oi" reformat -> "Ha Noi".
-If no information is found, enter null in that field. 
+If no information is found, enter null in that field. All returned null values MUST BE written as null, not as the string "null". For example, "note" field with no return content would be: 'note': null, NOT "note": "null" . 
 Your goal is to ensure that your output contains only JSON data in the correct format as specified above. Avoid returning any other format or structure. 
 MAKE SURE the response must come from the information I provided (FILE ATTACHED BELOW) and NOT OTHER SOURCE. """
 

@@ -4,7 +4,7 @@ from processor.gemini_processor import GeminiProcessor
 import io
 from flask_cors import CORS
 
-ALLOWED_EXTENSIONS = {"txt", "doc", "docx", "pdf"}
+ALLOWED_EXTENSIONS = {"doc", "docx", "pdf"}
 
 cors_origin = os.getenv("CORS_ORIGIN")
 CORS_ORIGIN = cors_origin.strip().strip('"')
@@ -41,7 +41,7 @@ def extract_cv():
         return (
             jsonify(
                 {
-                    "Error": "Invalid file extension. Supported file extensions are .txt, .doc, .docx, .pdf"
+                    "Error": "Invalid file extension. Supported file extensions are .doc, .docx, .pdf"
                 }
             ),
             400,
