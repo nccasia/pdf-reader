@@ -1,8 +1,12 @@
-Fullname
-Email
-Phone Number
-Date of birth
-Address
-Gender
-Position
-Note
+[
+    {
+        Fullname
+        Email
+        Phone Number
+        Date of birth
+        Address
+        Gender
+        Position
+        Note
+    }
+]

@@ -2,7 +2,7 @@ import requests
 import json
 from .base_processor import BaseProcessor
 import os
-from .prompt import SYSTEM_PROMPT, USER_PROMPT
+from .prompt import SYSTEM_PROMPT, USER_PROMPT, MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT
 
 GEMINI_MAX_TOKENS = 1048576
 GEMINI_MODEL_NAME = "gemini-1.5-pro-latest"
@@ -44,6 +44,41 @@ class GeminiProcessor(BaseProcessor):
         try:
             start_pos = response.find("{")
             end_pos = response.rfind("}") + 1
+
+            json_string = response[start_pos:end_pos]
+            data = json.loads(json_string)
+            return data
+        except KeyError:
+            print("KeyError: Some key is missing in the JSON response")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def get_gemini_payload_multi(self, attachment_data):
+        with open("fields.txt", "r") as f:
+            target_fields = f.read()
+        payload = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": f"{MULTI_SYSTEM_PROMPT}\n{MULTI_USER_PROMPT.format(attachment_data=attachment_data, target_fields=target_fields)}",
+                        }
+                    ]
+                }
+            ],
+        }
+        return payload
+
+    def get_response_multi(self, attachment_data):
+        response = requests.post(
+            self.url,
+            headers=self.headers,
+            json=self.get_gemini_payload_multi(attachment_data),
+        )
+        response = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+        try:
+            start_pos = response.find("[")
+            end_pos = response.rfind("]") + 1
 
             json_string = response[start_pos:end_pos]
             data = json.loads(json_string)

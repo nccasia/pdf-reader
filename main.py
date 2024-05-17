@@ -1,7 +1,9 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from processor.gemini_processor import GeminiProcessor
 import io
+import requests
+import fitz
 from flask_cors import CORS
 
 ALLOWED_EXTENSIONS = {"doc", "docx", "pdf"}
@@ -19,9 +21,9 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/extract-cv", methods=["GET"])
-def get_extract_cv():
-    return jsonify({"Message": "This is a GET request to /extract-cv"}), 200
+@app.route("/check_connection", methods=["GET"])
+def check_connection():
+    return Response(status=200)
 
 
 @app.route("/extract-cv", methods=["POST"])
@@ -54,6 +56,43 @@ def extract_cv():
         return jsonify(response), 200
     except Exception as e:
         return jsonify({"Error": str(e)}), 500
+
+
+class PDFProcessor:
+    @staticmethod
+    def extract_text_from_url(url):
+        response = requests.get(url)
+        if response.status_code == 200:
+            pdf_document = fitz.open(stream=io.BytesIO(response.content))
+            text = ""
+            for page_number, page in enumerate(pdf_document):
+                text += page.get_text()
+
+            return text
+        else:
+            return None
+
+
+@app.route("/extract-multifile", methods=["POST"])
+def extract_multifile():
+    data = request.get_json()
+    if "urls" not in data:
+        return jsonify({"Error": "No URLs provided"}), 400
+
+    urls = data["urls"]
+
+    if len(urls) > 10:
+        return jsonify({"Error": "Too many URLs provided. Maximum limit is 10."}), 400
+    data_cv = []
+    i = 1
+    for url in urls:
+        data_cv.append(f"\n---------- This is CV {i} ----------\n")
+        i += 1
+        data_cv.append(PDFProcessor.extract_text_from_url(url))
+        data_cv.append("\n")
+    text = "".join(data_cv)
+    response = processor.get_response_multi(text)
+    return jsonify(response), 200
 
 
 if __name__ == "__main__":
