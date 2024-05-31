@@ -21,7 +21,7 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route("/check_connection", methods=["GET"])
+@app.route("/check-connection", methods=["GET"])
 def check_connection():
     return Response(status=200)
 
