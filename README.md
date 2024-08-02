@@ -17,7 +17,7 @@ This Flask API application processes CV files, extracting important information 
 3. Run the following command to execute cv_extraction_service.sh:
 
 ```bash
-./cv_extraction_service.sh
+./cv_extraction_service.sh -p 1300 -host "0.0.0.0"
 ```
 
 Note:
@@ -30,11 +30,11 @@ Before running the above command, you may need to grant execute permission to cv
 Check status the service
 
 ```bash
-sudo systemctl status your_service.service
+sudo systemctl status extract_cv.service
 ```
 
 Stop the service
 
 ```bash
-sudo systemctl stop your_service.service
+sudo systemctl stop extract_cv.service
 ```
