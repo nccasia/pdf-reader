@@ -3,7 +3,7 @@ from PIL import Image
 import fitz
 from google.cloud import vision
 from app.constants import ALLOWED_EXTENSIONS
-from pypdf import PdfReader
+import PyPDF2
 from fastapi import HTTPException
 import requests
 
@@ -87,10 +87,11 @@ def process_multi_file(urls):
 
 
 def convert_pdf_to_text(file_contents):
-    reader = PdfReader(file_contents)
+    reader = PyPDF2.PdfReader(file_contents)
     text = ""
     for page in reader.pages:
         text += page.extract_text()
+
     return text
 
 
