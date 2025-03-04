@@ -11,3 +11,5 @@ pyopenssl
 docx2txt
 uvicorn
 google-cloud-vision
+python-multipart
+PyPDF2

@@ -4,9 +4,9 @@ from app.utils.file_utils import ocr_pdf, convert_pdf_to_text
 import requests
 import json
 import os
-from app.constants import GEMINI_MODEL_NAME
 from .prompt import SYSTEM_PROMPT, USER_PROMPT, MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class BaseProcessor:
     def __init__(self): ...
@@ -14,12 +14,12 @@ class BaseProcessor:
     def process_text(
         self,
         file: BinaryIO,
-        file_extensiion: str,
+        file_extension: str,
     ):
-        file_extensiion = file_extensiion.lower()
-        if file_extensiion == ".pdf":
+        file_extension = file_extension.lower()
+        if file_extension == ".pdf":
             attachment_data = convert_pdf_to_text(file)
-        elif file_extensiion in [".doc", ".docx"]:
+        elif file_extension in [".doc", ".docx"]:
             attachment_data = docx2txt.process(file)
         else:
             raise ValueError(
@@ -55,6 +55,7 @@ class GeminiProcessor(BaseProcessor):
         super().__init__()
         self.headers = {"Content-Type": "application/json"}
         self.api_key = os.getenv("GEMINI_API_KEY")
+        GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME")
         self.url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL_NAME}:generateContent?key={self.api_key}"
 
     def check_number_of_tokens(self, text):
