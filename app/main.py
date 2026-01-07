@@ -2,6 +2,8 @@ import os
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.extract_cv import router as extract_cv_router
+from dotenv import load_dotenv
+load_dotenv()
 
 CORS_ORIGINs = os.getenv("CORS_ORIGIN", "*").strip().strip('"').split('", "')
 
