@@ -5,8 +5,6 @@ import requests
 import json
 import os
 from .prompt import SYSTEM_PROMPT, USER_PROMPT, MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT
-from dotenv import load_dotenv
-load_dotenv()
 
 class BaseProcessor:
     def __init__(self): ...
@@ -55,8 +53,8 @@ class GeminiProcessor(BaseProcessor):
         super().__init__()
         self.headers = {"Content-Type": "application/json"}
         self.api_key = os.getenv("GEMINI_API_KEY")
-        GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME")
-        self.url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL_NAME}:generateContent?key={self.api_key}"
+        self.model = os.getenv("GEMINI_MODEL_NAME")
+        self.url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent?key={self.api_key}"
 
     def check_number_of_tokens(self, text):
         pass
@@ -83,16 +81,20 @@ class GeminiProcessor(BaseProcessor):
             json=payload,
         )
 
-        response = response.json()["candidates"][0]["content"]["parts"][0]["text"]
+        if response.status_code == 429:
+            raise Exception(
+                f"GeminiKey: Rate limit exceeded. Please try again later."
+            )
+        content = response.json()["candidates"][0]["content"]["parts"][0]["text"]
         try:
             if response_type == "single":
-                start_pos = response.find("{")
-                end_pos = response.rfind("}") + 1
+                start_pos = content.find("{")
+                end_pos = content.rfind("}") + 1
             else:  # assuming response_type == "multi"
-                start_pos = response.find("[")
-                end_pos = response.rfind("]") + 1
+                start_pos = content.find("[")
+                end_pos = content.rfind("]") + 1
 
-            json_string = response[start_pos:end_pos]
+            json_string = content[start_pos:end_pos]
             data = json.loads(json_string)
             return data
         except KeyError:
