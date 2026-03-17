@@ -1,6 +1,6 @@
 # CV Extraction API
 
-A FastAPI service that extracts structured candidate information from CV files (PDF, DOC, DOCX) using an LLM backend (`api-llm.nccsoft.vn`). Supports both text-based and OCR-based extraction, for single files and batches of URLs.
+A FastAPI service that extracts structured candidate information from CV files (PDF, DOC, DOCX) using an LLM backend (`llm.nccsoft.vn`). Supports both text-based and OCR-based extraction, for single files and batches of URLs.
 
 ## Features
 
@@ -34,7 +34,7 @@ app/
 │   └── extract_cv.py            # Business logic (ExtractCVUseCase)
 ├── infrastructure/
 │   ├── llm/
-│   │   ├── client.py            # LLMClient (api-llm.nccsoft.vn)
+│   │   ├── client.py            # LLMClient (llm.nccsoft.vn)
 │   │   └── prompts.py           # System / user prompt templates
 │   └── parsers/
 │       ├── file_parser.py       # PDF text + OCR parsing
