@@ -2,7 +2,7 @@ import io
 from PIL import Image
 import fitz
 from google.cloud import vision
-from app.constants import ALLOWED_EXTENSIONS
+from app.config import ALLOWED_EXTENSIONS
 import PyPDF2
 from fastapi import HTTPException
 import requests

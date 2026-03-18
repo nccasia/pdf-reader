@@ -1,2 +1,0 @@
-GEMINI_MAX_TOKENS = 8192
-ALLOWED_EXTENSIONS = {"doc", "docx", "pdf"}
