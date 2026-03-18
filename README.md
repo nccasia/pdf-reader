@@ -1,40 +1,115 @@
-## Flask CV Processor API
+# CV Extraction API
 
-This is a Flask API application for processing CV files. It allows users to upload CV files and retrieve important information from those files in JSON format.
+A FastAPI service that extracts structured candidate information from CV files (PDF, DOC, DOCX) using an LLM backend (`llm.nccsoft.vn`). Supports both text-based and OCR-based extraction, for single files and batches of URLs.
 
 ## Features
 
-Users can send POST requests to upload CV files. The CV files can have extensions such as .txt, .doc, .docx, .pdf.
-After the CV file is uploaded, the API uses a processor to process the content of the CV file and extract important information from it. The API returns important information from the CV files in JSON format.
+- Extract CV data from uploaded files (`PDF`, `DOC`, `DOCX`)
+- OCR-based extraction for scanned PDFs via Google Cloud Vision
+- Batch extraction from multiple remote URLs (up to 10)
+- Clean architecture: domain → use cases → infrastructure → API
 
-## Usage (Installing and running on Ubuntu Server)
+## Extracted fields
 
-This Flask API application processes CV files, extracting important information and returning it in JSON format. It's powered by Gunicorn, a Python WSGI HTTP server.
+| Field | Description |
+|---|---|
+| `fullname` | Candidate name |
+| `email` | Email address |
+| `phone_number` | Phone number |
+| `dob` | Date of birth (`dd/mm/yyyy`) |
+| `address` | Address |
+| `gender` | Gender |
+| `position` | Applied position |
+| `note` | Notable certifications / GPA |
 
-1. Open a terminal.
+## Project structure
 
-2. Navigate to the directory containing cv_extraction_service.sh.
-3. Run the following command to execute cv_extraction_service.sh:
-
-```bash
-./cv_extraction_service.sh -p 1300 -host "0.0.0.0"
+```
+app/
+├── config.py                    # Environment variables & constants
+├── main.py                      # FastAPI app entry point
+├── domain/
+│   └── interfaces.py            # IFileParser, ILLMClient abstractions
+├── use_cases/
+│   └── extract_cv.py            # Business logic (ExtractCVUseCase)
+├── infrastructure/
+│   ├── llm/
+│   │   ├── client.py            # LLMClient (llm.nccsoft.vn)
+│   │   └── prompts.py           # System / user prompt templates
+│   └── parsers/
+│       ├── file_parser.py       # PDF text + OCR parsing
+│       └── url_fetcher.py       # Remote URL text/OCR fetching
+└── api/
+    ├── schemas.py               # Pydantic request/response models
+    └── routers/
+        └── cv_router.py         # FastAPI route handlers
 ```
 
-Note:
-Before running the above command, you may need to grant execute permission to cv_extraction_service.sh using the `chmod +x cv_extraction_service.sh` command.
+## API endpoints
 
-4. After running cv_extraction_service.sh, the server will be started on port 1300 with the endpoint http://localhost:1300/extract-cv.
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/check-connection` | Health check |
+| `POST` | `/extract-cv` | Extract CV from uploaded file (text) |
+| `POST` | `/extract-cv-vision` | Extract CV from uploaded file (OCR) |
+| `POST` | `/extract-multifile` | Extract CVs from multiple URLs (text) |
+| `POST` | `/extract-multifile-vision` | Extract CVs from multiple URLs (OCR) |
 
-5. To check status or stop the service, you can use the `sudo systemctl stop` command:
+Interactive docs available at `http://localhost:8000/docs`.
 
-Check status the service
+## Setup
+
+### 1. Clone & create virtual environment
 
 ```bash
+git clone <repo-url>
+cd pdf-reader
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 2. Configure environment
+
+Copy `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+```env
+GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"
+CORS_ORIGIN=' "https://frontend.example.com" '
+LLM_API_URL="https://llm.nccsoft.vn"
+LLM_MODEL_NAME="Qwen3.5-35B-A3B"
+```
+
+> `GOOGLE_APPLICATION_CREDENTIALS` is only required for OCR endpoints (`/extract-cv-vision`, `/extract-multifile-vision`).
+
+### 3. Run locally
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+## Deployment (Ubuntu Server)
+
+Use the provided shell script to install and register the service with `systemd`:
+
+```bash
+chmod +x startup.sh
+./startup.sh -p 1300 -host "0.0.0.0"
+```
+
+Manage the service:
+
+```bash
+# Check status
 sudo systemctl status extract_cv.service
-```
 
-Stop the service
-
-```bash
+# Stop
 sudo systemctl stop extract_cv.service
+
+# Restart
+sudo systemctl restart extract_cv.service
 ```
