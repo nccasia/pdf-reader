@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.schemas import URLList
 from app.config import ALLOWED_EXTENSIONS
-from app.infrastructure.llm.client import LLMClient
+from app.infrastructure.llm.factory import create_llm_client
 from app.infrastructure.parsers.file_parser import FileParser
 from app.infrastructure.parsers.url_fetcher import URLFetcher
 from app.use_cases.extract_cv import ExtractCVUseCase
@@ -15,7 +15,7 @@ router = APIRouter()
 
 _use_case = ExtractCVUseCase(
     file_parser=FileParser(),
-    llm_client=LLMClient(),
+    llm_client=create_llm_client(),
     url_fetcher=URLFetcher(),
 )
 

@@ -2,6 +2,7 @@ import json
 from typing import Any, BinaryIO, List
 
 from app.domain.interfaces import IFileParser, ILLMClient
+from app.infrastructure.llm.anthropic_client import CV_LIST_SCHEMA, CV_SCHEMA
 from app.infrastructure.llm.prompts import (
     MULTI_SYSTEM_PROMPT,
     MULTI_USER_PROMPT,
@@ -47,12 +48,18 @@ class ExtractCVUseCase:
         return self._complete_multi("".join(parts))
 
     def _complete_single(self, text: str) -> Any:
-        content = self._llm.complete(SYSTEM_PROMPT, USER_PROMPT.format(attachment_data=text))
-        return self._parse_json(content, mode="single")
+        content = self._llm.complete(SYSTEM_PROMPT, USER_PROMPT.format(attachment_data=text), CV_SCHEMA)
+        try:
+            return json.loads(content)
+        except (json.JSONDecodeError, TypeError):
+            return self._parse_json(content, mode="single")
 
     def _complete_multi(self, text: str) -> Any:
-        content = self._llm.complete(MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT.format(attachment_data=text))
-        return self._parse_json(content, mode="multi")
+        content = self._llm.complete(MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT.format(attachment_data=text), CV_LIST_SCHEMA)
+        try:
+            return json.loads(content)
+        except (json.JSONDecodeError, TypeError):
+            return self._parse_json(content, mode="multi")
 
     def _parse_json(self, response: str, mode: str) -> Any:
         if mode == "single":
