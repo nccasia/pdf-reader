@@ -14,3 +14,4 @@ venv/
 usr/
 data/
 aws_credential.yaml
+.venv/
