@@ -1,5 +1,5 @@
 import json
-from typing import Any, BinaryIO, List
+from typing import Any, BinaryIO
 
 from app.domain.interfaces import IFileParser, ILLMClient
 from app.infrastructure.llm.prompts import (
@@ -30,7 +30,7 @@ class ExtractCVUseCase:
         text = self._parser.parse_ocr(file, extension)
         return self._complete_single(text)
 
-    def extract_multi_from_urls(self, urls: List[str]) -> Any:
+    def extract_multi_from_urls(self, urls: list[str]) -> Any:
         parts = []
         for i, url in enumerate(urls, 1):
             parts.append(f"\n---------- This is CV {i} ----------\n")
@@ -38,7 +38,7 @@ class ExtractCVUseCase:
             parts.append("\n")
         return self._complete_multi("".join(parts))
 
-    def extract_multi_from_urls_ocr(self, urls: List[str]) -> Any:
+    def extract_multi_from_urls_ocr(self, urls: list[str]) -> Any:
         parts = []
         for i, url in enumerate(urls, 1):
             parts.append(f"\n---------- This is CV {i} ----------\n")
