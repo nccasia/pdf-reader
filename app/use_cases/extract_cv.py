@@ -48,14 +48,14 @@ class ExtractCVUseCase:
         return self._complete_multi("".join(parts))
 
     def _complete_single(self, text: str) -> Any:
-        content = self._llm.complete(SYSTEM_PROMPT, USER_PROMPT.format(attachment_data=text), CV_SCHEMA)
+        content = self._llm.complete(SYSTEM_PROMPT, USER_PROMPT.format(attachment_data=text))
         try:
             return json.loads(content)
         except (json.JSONDecodeError, TypeError):
             return self._parse_json(content, mode="single")
 
     def _complete_multi(self, text: str) -> Any:
-        content = self._llm.complete(MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT.format(attachment_data=text), CV_LIST_SCHEMA)
+        content = self._llm.complete(MULTI_SYSTEM_PROMPT, MULTI_USER_PROMPT.format(attachment_data=text))
         try:
             return json.loads(content)
         except (json.JSONDecodeError, TypeError):
